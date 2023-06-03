@@ -60,7 +60,7 @@ class Gudang extends CI_Controller
 		$this->load->view('admin/page/gudang/import_barang', $data);
 		$this->load->view('admin/layout/footer', $data);
 	}
-	
+
 
 	public function do_import()
 	{
@@ -84,71 +84,80 @@ class Gudang extends CI_Controller
 	}
 
 	public function generateExcel($jenis)
-	{
-		// Buat objek Spreadsheet
-		$spreadsheet = new Spreadsheet();
-	
-		// Buat objek Worksheet
-		$worksheet = $spreadsheet->getActiveSheet();
-	
-		// Set header kolom
-		$worksheet->setCellValue('A1', 'Tanggal');
-		$worksheet->setCellValue('B1', 'Nama Barang');
-		$worksheet->setCellValue('C1', 'Keterangan');
-		$worksheet->setCellValue('D1', 'Jumlah');
-	
-		// Menggunakan DataValidation pada kolom barang
-		$barang_validation = $worksheet->getCell('B2')->getDataValidation();
-		$barang_validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-	
-		// Buat daftar pilihan barang
-		$barangs = $this->Gudang_model->baranglog(true);
-		$barangList = array();
-	
-		foreach ($barangs as $barang) {
-			$barangList[] = $barang['nama_barang'];
-		}
-	
-		$barang_formula = '"' . implode(",", $barangList) . '"';
-		$barang_validation->setFormula1($barang_formula);
-	
-		// Mengatur validasi keterangan hanya pada kolom sampai 100
-		$worksheet->setDataValidation("B2:B100", $barang_validation);
-	
-		if ($jenis == 'keluar') {
-			// Menggunakan DataValidation pada kolom Keterangan
-			$keterangan_validation = $worksheet->getCell('C2')->getDataValidation();
-			$keterangan_validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-	
-			// Buat daftar pilihan keterangan
-			$outlets = $this->Gudang_model->getOutlet(true);
-			$keteranganList = array();
-	
-			foreach ($outlets as $outlet) {
-				$keteranganList[] = $outlet['nama_outlet'];
-			}
-	
-			$keterangan_formula = '"' . implode(",", $keteranganList) . '"';
-			$keterangan_validation->setFormula1($keterangan_formula);
-	
-			// Mengatur validasi keterangan hanya pada kolom sampai 100
-			$worksheet->setDataValidation("C2:C100", $keterangan_validation);
-		}
-	
-		// Simpan file Excel
-		$filename = 'log_import.xlsx';
-		$writer = new Xlsx($spreadsheet);
-		$writer->save($filename);
-	
-		// Set header HTTP untuk mengunduh file
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="' . $filename . '"');
-		header('Cache-Control: max-age=0');
-	
-		// Mengirim file Excel ke output
-		$writer->save('php://output');
-	}
-	
+{
+    // Buat objek Spreadsheet
+    $spreadsheet = new Spreadsheet();
+
+    // Buat objek Worksheet
+    $worksheet = $spreadsheet->getActiveSheet();
+
+    // Set header kolom
+    $worksheet->setCellValue('A1', 'Tanggal');
+    $worksheet->setCellValue('B1', 'Nama Barang');
+    $worksheet->setCellValue('C1', 'Keterangan');
+    $worksheet->setCellValue('D1', 'Jumlah');
+
+    // Menggunakan DataValidation pada kolom barang
+    $barang_validation = $worksheet->getCell('B2')->getDataValidation();
+    $barang_validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
+
+    // Buat daftar pilihan barang
+    $barangs = $this->Gudang_model->baranglog(true);
+    $barangList = array();
+
+    foreach ($barangs as $barang) {
+        $barangList[] = $barang['nama_barang'];
+    }
+
+    $barang_formula = '"' . implode(",", $barangList) . '"';
+    $barang_validation->setFormula1($barang_formula);
+
+    // Mengatur validasi keterangan hanya pada kolom sampai 100
+    $worksheet->setDataValidation("B2:B100", $barang_validation);
+
+    if ($jenis == 'keluar') {
+        // Menggunakan DataValidation pada kolom Keterangan
+        $keterangan_validation = $worksheet->getCell('C2')->getDataValidation();
+        $keterangan_validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
+
+        // Buat daftar pilihan keterangan
+        $outlets = $this->Gudang_model->getOutlet(true);
+        $keteranganList = array();
+
+        foreach ($outlets as $outlet) {
+            $keteranganList[] = $outlet['nama_outlet'];
+        }
+
+        $keterangan_formula = '"' . implode(",", $keteranganList) . '"';
+        $keterangan_validation->setFormula1($keterangan_formula);
+
+        // Mengatur validasi keterangan hanya pada kolom sampai 100
+        $worksheet->setDataValidation("C2:C100", $keterangan_validation);
+    }
+
+    // Simpan file Excel
+    $path = './uploads/';
+    $filename = $path . date('YmdHis');
+    if ($jenis == 'keluar') {
+        $filename .= '_keluar';
+    } else {
+        $filename .= '_masuk';
+    }
+    $filename .= '_logimport.xlsx';
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save($filename);
+
+    // Set header HTTP untuk mengunduh file
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+
+    // Mengirim file Excel ke output
+    $writer->save('php://output');
+}
+
+
 	public function log()
 	{
 		// hanya memproses request ajax
