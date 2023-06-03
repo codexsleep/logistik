@@ -1,0 +1,12 @@
+{
+    "menu1": {
+        "submenu1": "nama menu",
+        "submenu2": "nama menu",
+        "submenu3": "nama menu",
+        "submenu4": "nama menu"
+    },
+    "menu2": {
+        "submenu1": "nama menu",
+        "submenu2": "nama menu"
+    }
+}

@@ -1,0 +1,18 @@
+{
+  "satuan": [
+    { "nama": "unit" },
+    { "nama": "pcs" },
+    { "nama": "set" },
+    { "nama": "roll" },
+    { "nama": "meter" },
+    { "nama": "lembar" },
+    { "nama": "box" },
+    { "nama": "botol" },
+    { "nama": "paket" },
+    { "nama": "buah" },
+    { "nama": "buku" },
+    { "nama": "rim" },
+    { "nama": "liter" }
+  ]
+}
+  
